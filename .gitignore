@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-selfcheck.json
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+
+# Docker
+*.log
+docker-compose.yml.bak
+
+# IDEs
+.vscode/
+.idea/

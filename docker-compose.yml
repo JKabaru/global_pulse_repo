@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  # Placeholder for future services (API, dashboard, etc.)
+  api:
+    image: python:3.11-slim
+    volumes:
+      - ./services:/app
+    environment:
+      - PYTHONPATH=/app
+    command: ["echo", "API setup will come later"]
+
+networks:
+  globalpulse-net:
+    driver: bridge

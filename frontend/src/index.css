@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: red !important;
+}
+
+:root {
+  --primary-bg: #0F0F12;
+  --secondary-bg: #1A1A1D;
+  --accent-ember: #7B29B8;
+  --accent-magenta: #C129A0;
+  --accent-cyan: #29B8B0;
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFFFF33;
+}
+
+body {
+  font-family: 'Inter', 'Open Sans', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Space Mono', 'Fragment Mono', 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
