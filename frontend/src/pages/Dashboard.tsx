@@ -4,6 +4,10 @@ import Header from '../components/navigation/Header';
 import MetricsGrid from '../components/dashboard/MetricsGrid';
 import SystemStatus from '../components/dashboard/SystemStatus';
 import RecentActivity from '../components/dashboard/RecentActivity';
+import QuickActions from '../components/dashboard/QuickActions';
+import DataQualityIndicator from '../components/dashboard/DataQualityIndicator';
+import PerformanceMetrics from '../components/analytics/PerformanceMetrics';
+import DataCoverage from '../components/analytics/DataCoverage';
 import ForecastChart from '../components/charts/ForecastChart';
 import CategoryDistributionChart from '../components/charts/CategoryDistributionChart';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -60,43 +64,73 @@ const Dashboard: React.FC = () => {
         <MetricsGrid metrics={metrics} />
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
           {/* Charts Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
-                <ForecastChart 
-                  data={chartData}
-                  title="Recent Forecast Trends"
-                  showConfidenceInterval={true}
-                />
-              </div>
-            </motion.div>
+          <div className="xl:col-span-4 space-y-6">
+            {/* Top Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
+                  <ForecastChart 
+                    data={chartData}
+                    title="Recent Forecast Trends"
+                    showConfidenceInterval={true}
+                  />
+                </div>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
-                <CategoryDistributionChart 
-                  data={categoryData}
-                  title="Category Distribution"
-                />
-              </div>
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
+                  <CategoryDistributionChart 
+                    data={categoryData}
+                    title="Category Distribution"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                <DataQualityIndicator overallScore={metrics.dataQuality} />
+              </motion.div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <PerformanceMetrics />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+              >
+                <DataCoverage />
+              </motion.div>
+            </div>
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="xl:col-span-1 space-y-6">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.5 }}
             >
               <SystemStatus 
                 health={metrics.systemHealth}
@@ -107,9 +141,17 @@ const Dashboard: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.6 }}
             >
               <RecentActivity />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <QuickActions />
             </motion.div>
           </div>
         </div>

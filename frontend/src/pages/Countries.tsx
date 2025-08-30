@@ -11,12 +11,30 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Badge from '../components/ui/Badge';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import CountryForm from '../components/forms/CountryForm';
 import { useCountries } from '../hooks/useData';
 
 const Countries: React.FC = () => {
   const { countries, loading, error } = useCountries();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [showForm, setShowForm] = useState(false);
+  const [editingCountry, setEditingCountry] = useState<any>(null);
+
+  const handleAddCountry = () => {
+    setEditingCountry(null);
+    setShowForm(true);
+  };
+
+  const handleEditCountry = (country: any) => {
+    setEditingCountry(country);
+    setShowForm(true);
+  };
+
+  const handleFormSuccess = () => {
+    // In a real app, you'd refresh the data here
+    console.log('Country saved successfully');
+  };
 
   if (loading) {
     return (
@@ -76,6 +94,13 @@ const Countries: React.FC = () => {
               <Button variant="secondary" icon={<FunnelIcon className="w-4 h-4" />}>
                 Filters
               </Button>
+              <Button 
+                variant="primary" 
+                icon={<GlobeAltIcon className="w-4 h-4" />}
+                onClick={handleAddCountry}
+              >
+                Add Country
+              </Button>
             </div>
           </div>
         </Card>
@@ -133,9 +158,20 @@ const Countries: React.FC = () => {
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-quantum-ember/20">
-                  <Button variant="ghost" size="sm" className="w-full">
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleEditCountry(country)}
+                    >
+                      Edit
+                    </Button>
+                    <Button variant="ghost" size="sm" className="flex-1">
+                      View Details
+                    </Button>
+                  </div>
                     View Details
-                  </Button>
                 </div>
               </Card>
             </motion.div>
@@ -149,6 +185,13 @@ const Countries: React.FC = () => {
           </div>
         )}
       </div>
+
+      <CountryForm
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        onSuccess={handleFormSuccess}
+        editData={editingCountry}
+      />
     </div>
   );
 };

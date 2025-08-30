@@ -11,11 +11,29 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import IndicatorForm from '../components/forms/IndicatorForm';
 import { useIndicators } from '../hooks/useData';
 
 const Indicators: React.FC = () => {
   const { indicators, loading, error } = useIndicators();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [editingIndicator, setEditingIndicator] = useState<any>(null);
+
+  const handleAddIndicator = () => {
+    setEditingIndicator(null);
+    setShowForm(true);
+  };
+
+  const handleEditIndicator = (indicator: any) => {
+    setEditingIndicator(indicator);
+    setShowForm(true);
+  };
+
+  const handleFormSuccess = () => {
+    // In a real app, you'd refresh the data here
+    console.log('Indicator saved successfully');
+  };
 
   if (loading) {
     return (
@@ -64,12 +82,23 @@ const Indicators: React.FC = () => {
       <div className="p-6 space-y-6">
         {/* Search */}
         <Card>
-          <Input
-            placeholder="Search indicators..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            icon={<DocumentChartBarIcon className="w-4 h-4" />}
-          />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Input
+                placeholder="Search indicators..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={<DocumentChartBarIcon className="w-4 h-4" />}
+              />
+            </div>
+            <Button 
+              variant="primary" 
+              icon={<DocumentChartBarIcon className="w-4 h-4" />}
+              onClick={handleAddIndicator}
+            >
+              Add Indicator
+            </Button>
+          </div>
         </Card>
 
         {/* Indicators Grid */}
@@ -134,9 +163,18 @@ const Indicators: React.FC = () => {
                   <span className="text-text-secondary text-xs">
                     Updated {new Date(indicator.updated_at).toLocaleDateString()}
                   </span>
-                  <Button variant="ghost" size="sm">
-                    View Details
-                  </Button>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleEditIndicator(indicator)}
+                    >
+                      Edit
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      View Details
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </motion.div>
@@ -167,6 +205,13 @@ const Indicators: React.FC = () => {
           </div>
         )}
       </div>
+
+      <IndicatorForm
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        onSuccess={handleFormSuccess}
+        editData={editingIndicator}
+      />
     </div>
   );
 };

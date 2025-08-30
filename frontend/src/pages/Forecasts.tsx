@@ -12,6 +12,9 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ForecastChart from '../components/charts/ForecastChart';
+import ForecastAccuracy from '../components/analytics/ForecastAccuracy';
+import Table from '../components/ui/Table';
+import ForecastForm from '../components/forms/ForecastForm';
 import { useForecasts } from '../hooks/useData';
 import type { ChartDataPoint } from '../types';
 
@@ -19,6 +22,16 @@ const Forecasts: React.FC = () => {
   const { forecasts, loading, error } = useForecasts();
   const [selectedHorizon, setSelectedHorizon] = useState<string>('3M');
   const [selectedCountry, setSelectedCountry] = useState<string>('all');
+  const [showForm, setShowForm] = useState(false);
+
+  const handleGenerateForecast = () => {
+    setShowForm(true);
+  };
+
+  const handleFormSuccess = () => {
+    // In a real app, you'd refresh the data here
+    console.log('Forecast generated successfully');
+  };
 
   if (loading) {
     return (
@@ -52,6 +65,29 @@ const Forecasts: React.FC = () => {
 
   const countries = Array.from(new Set(forecasts.map(f => f.country_code)));
   const horizons = ['1M', '3M', '6M'];
+
+  const tableColumns = [
+    { key: 'country_code', label: 'Country', sortable: true },
+    { key: 'indicator_name', label: 'Indicator', sortable: true },
+    { 
+      key: 'forecast_value', 
+      label: 'Forecast Value', 
+      sortable: true,
+      render: (value: number) => (
+        <span className={`font-mono ${value > 0 ? 'text-green-400' : 'text-red-400'}`}>
+          {value.toFixed(2)}
+        </span>
+      )
+    },
+    { key: 'forecast_horizon', label: 'Horizon', sortable: true },
+    { 
+      key: 'forecast_date', 
+      label: 'Date', 
+      sortable: true,
+      render: (value: string) => new Date(value).toLocaleDateString()
+    },
+    { key: 'model_name', label: 'Model', sortable: false }
+  ];
 
   return (
     <div className="space-y-6">
@@ -105,28 +141,63 @@ const Forecasts: React.FC = () => {
         </Card>
 
         {/* Chart */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
+              <ForecastChart 
+                data={chartData}
+                title="Forecast Trends"
+                showConfidenceInterval={true}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <ForecastAccuracy />
+          </motion.div>
+        </div>
+
+        {/* Forecasts Table */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.4 }}
         >
-          <div className="bg-charcoal border border-quantum-ember/20 rounded-xl p-6">
-            <ForecastChart 
-              data={chartData}
-              title="Forecast Trends"
-              showConfidenceInterval={true}
+          <div className="space-y-4">
+            <h3 className="text-lg font-mono uppercase text-text-primary tracking-wider">
+              All Forecasts
+            </h3>
+            <Table
+              columns={tableColumns}
+              data={filteredForecasts}
             />
           </div>
         </motion.div>
 
         {/* Forecast Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h3 className="text-lg font-mono uppercase text-text-primary tracking-wider mb-4">
+            Recent Forecasts
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredForecasts.slice(0, 9).map((forecast, index) => (
             <motion.div
               key={forecast.forecast_id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + index * 0.05 }}
+              transition={{ delay: 0.6 + index * 0.05 }}
             >
               <Card hover>
                 <div className="flex items-start justify-between mb-4">
@@ -174,22 +245,6 @@ const Forecasts: React.FC = () => {
                     </span>
                   </div>
                 </div>
-
-                {forecast.confidence_interval_lower && forecast.confidence_interval_upper && (
-                  <div className="mt-4 pt-4 border-t border-quantum-ember/20">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-text-secondary">Confidence Interval</span>
-                      <span className="text-text-primary">
-                        [{forecast.confidence_interval_lower.toFixed(2)}, {forecast.confidence_interval_upper.toFixed(2)}]
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
         {filteredForecasts.length === 0 && (
           <div className="text-center py-12">
             <ChartBarIcon className="w-12 h-12 text-text-secondary mx-auto mb-4" />
@@ -197,6 +252,12 @@ const Forecasts: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ForecastForm
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        onSuccess={handleFormSuccess}
+      />
     </div>
   );
 };
